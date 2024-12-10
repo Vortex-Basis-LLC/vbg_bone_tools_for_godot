@@ -43,6 +43,8 @@ class_name VbgBlendSkeletonModifier3d extends VbgBaseAnimSkeletonModifier3d
 
 var _bone_inclusion_map: Dictionary = {}
 
+var _cached_track_to_bone_index: VbgTrackToBoneIndex
+
 
 func _validate_property(property: Dictionary) -> void:
 	if Engine.is_editor_hint():
@@ -71,7 +73,7 @@ func _get_animation() -> Animation:
 		return null
 
 func get_unscaled_anim_length() -> float:
-	var anim := _anim_ref.get_animation()
+	var anim := _get_animation()
 	if !anim:
 		return 0
 
@@ -122,6 +124,17 @@ func _is_bone_same_or_ancestor(ancestor_bone: int, other_bone: int) -> bool:
 		return _is_bone_same_or_ancestor(ancestor_bone, other_bone_parent)
 
 
+func _get_cached_track_to_bone_index(anim: Animation) -> VbgTrackToBoneIndex:
+	if _cached_track_to_bone_index:
+		if _cached_track_to_bone_index.anim != anim || _cached_track_to_bone_index.skeleton != get_skeleton():
+			_cached_track_to_bone_index = null
+
+	if !_cached_track_to_bone_index:
+		_cached_track_to_bone_index = VbgTrackToBoneIndex.new(get_skeleton(), anim)
+
+	return _cached_track_to_bone_index
+
+
 func _apply_bone_modifications() -> void:
 	var skeleton := get_skeleton()
 	if !skeleton || !_anim_ref:
@@ -139,6 +152,8 @@ func _apply_bone_modifications() -> void:
 	var anim_time := get_anim_time()
 	var anim_length := get_anim_length()
 
+	# TODO: The blend times shouldn't be used when looping and not transitioning into or out of this animation.
+
 	var blend_weight_to_use := blend_weight
 	if anim_time < blend_in_time:
 		blend_weight_to_use = blend_weight_to_use * (1.0 - ((blend_in_time - anim_time) / blend_in_time))
@@ -147,38 +162,55 @@ func _apply_bone_modifications() -> void:
 		if anim_time > blend_out_start_time:
 			blend_weight_to_use = blend_weight_to_use * (1.0 - ((anim_time - blend_out_start_time) / blend_out_time))
 
-	# TODO: If using saved pose, we should actually be processing every bone instead of just
-	# ones with a track present.
+	var track_to_bone_index := _get_cached_track_to_bone_index(anim)
 
-	for track_index in anim.get_track_count():
-		var track_path := anim.track_get_path(track_index)
-		var bone_name := track_path.get_concatenated_subnames()
-		var track_type := anim.track_get_type(track_index)
-		var bone := skeleton.find_bone(bone_name)
-		if bone != -1 && _is_bone_included(bone):
-			var bone_blend_weight := blend_weight_to_use
+	var bone_count := skeleton.get_bone_count()
+	for bone in bone_count:
+		var bone_blend_weight := blend_weight_to_use
 
-			if track_type == Animation.TrackType.TYPE_ROTATION_3D:
-				var current_bone_rotation: Quaternion
-				if use_saved_pose_as_base:
-					var saved_pose := use_saved_pose_as_base.saved_skeleton_pose
-					if saved_pose:
-						current_bone_rotation = saved_pose.bone_poses[bone].rotation
-				else:
-					current_bone_rotation = skeleton.get_bone_pose_rotation(bone)
+		if !_is_bone_included(bone):
+			# We won't apply the new animation, but we should still restore the saved pose.
+			bone_blend_weight = 0.0
 
-				var target_bone_rotation := anim.rotation_track_interpolate(track_index, frame_anim_time)
-				var blended_bone_rotation: Quaternion = lerp(current_bone_rotation, target_bone_rotation, bone_blend_weight)
-				skeleton.set_bone_pose_rotation(bone, blended_bone_rotation)
-			elif track_type == Animation.TrackType.TYPE_POSITION_3D:
-				var current_bone_pos: Vector3 = skeleton.get_bone_pose_position(bone)
-				if use_saved_pose_as_base:
-					var saved_pose := use_saved_pose_as_base.saved_skeleton_pose
-					if saved_pose:
-						current_bone_pos = saved_pose.bone_poses[bone].position
-				else:
-					current_bone_pos = skeleton.get_bone_pose_position(bone)
+		var rotation_track := track_to_bone_index.get_track_for_bone_rotation(bone)
+		var position_track := track_to_bone_index.get_track_for_bone_position(bone)
+		var scale_track := track_to_bone_index.get_track_for_bone_scale(bone)
 
-				var target_bone_pos := anim.position_track_interpolate(track_index, frame_anim_time)
-				var blended_bone_pos: Vector3 = lerp(current_bone_pos, target_bone_pos, bone_blend_weight)
-				skeleton.set_bone_pose_position(bone, blended_bone_pos)
+		if rotation_track != -1:
+			var current_bone_rotation: Quaternion
+			if use_saved_pose_as_base:
+				var saved_pose := use_saved_pose_as_base.saved_skeleton_pose
+				if saved_pose:
+					current_bone_rotation = saved_pose.bone_poses[bone].rotation
+			else:
+				current_bone_rotation = skeleton.get_bone_pose_rotation(bone)
+
+			var target_bone_rotation := anim.rotation_track_interpolate(rotation_track, frame_anim_time)
+			var blended_bone_rotation: Quaternion = lerp(current_bone_rotation, target_bone_rotation, bone_blend_weight)
+			skeleton.set_bone_pose_rotation(bone, blended_bone_rotation)
+
+		if position_track != -1:
+			var current_bone_pos: Vector3
+			if use_saved_pose_as_base:
+				var saved_pose := use_saved_pose_as_base.saved_skeleton_pose
+				if saved_pose:
+					current_bone_pos = saved_pose.bone_poses[bone].position
+			else:
+				current_bone_pos = skeleton.get_bone_pose_position(bone)
+
+			var target_bone_pos := anim.position_track_interpolate(position_track, frame_anim_time)
+			var blended_bone_pos: Vector3 = lerp(current_bone_pos, target_bone_pos, bone_blend_weight)
+			skeleton.set_bone_pose_position(bone, blended_bone_pos)
+
+		if scale_track != -1:
+			var current_bone_scale: Vector3
+			if use_saved_pose_as_base:
+				var saved_pose := use_saved_pose_as_base.saved_skeleton_pose
+				if saved_pose:
+					current_bone_scale = saved_pose.bone_poses[bone].scale
+			else:
+				current_bone_scale = skeleton.get_bone_pose_scale(bone)
+
+			var target_bone_scale := anim.scale_track_interpolate(scale_track, frame_anim_time)
+			var blended_bone_scale: Vector3 = lerp(current_bone_scale, target_bone_scale, bone_blend_weight)
+			skeleton.set_bone_pose_scale(bone, blended_bone_scale)

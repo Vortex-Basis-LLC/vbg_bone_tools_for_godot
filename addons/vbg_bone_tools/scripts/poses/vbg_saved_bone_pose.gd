@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+@tool
 class_name VbgSavedBonePose extends RefCounted
 
 # Saved pose state for a single bone.
