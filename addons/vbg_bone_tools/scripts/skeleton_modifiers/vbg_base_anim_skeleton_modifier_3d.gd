@@ -28,13 +28,20 @@ class_name VbgBaseAnimSkeletonModifier3d extends SkeletonModifier3D
 
 @export var auto_play: bool = true
 
+
 @export var anim_speed: float = 1.0:
 	set(value):
-		# TODO: Change anim position to match original scaled time.
-		if anim_speed <= 0.0:
+		if value == anim_speed:
+			return
+
+		# After adjusting speed, update the _anim_time to be at the same point in unscaled animation time.
+		var unscaled_anim_time := get_unscaled_anim_time()
+		if value <= 0.0:
 			anim_speed = 0.01
 		else:
 			anim_speed = value
+		set_unscaled_anim_time(unscaled_anim_time)
+
 
 @export_category("Debug")
 @export var play_from_start_in_editor: bool:
@@ -93,8 +100,14 @@ func get_anim_length() -> float:
 func get_anim_time() -> float:
 	return _anim_time
 
+func set_anim_time(new_time: float) -> void:
+	_anim_time = new_time
+
 func get_unscaled_anim_time() -> float:
 	return _anim_time * anim_speed
+
+func set_unscaled_anim_time(new_unscaled_time: float) -> void:
+	_anim_time = new_unscaled_time / anim_speed
 
 
 func stop() -> void:
