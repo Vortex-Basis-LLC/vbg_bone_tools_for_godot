@@ -32,15 +32,38 @@ var bone_poses: Array[VbgSavedBonePose]
 
 
 func save_current_pose() -> void:
-	var bone_count := skeleton.get_bone_count()
+	save_current_pose_from_compatible_skeleton(skeleton)
+
+
+func save_current_pose_from_compatible_skeleton(source_skeleton: Skeleton3D) -> void:
+	# NOTE: It is assumed this skeleton is compatible with the original one in terms of bone
+	#  order and bone count.
+
+	if !source_skeleton:
+		return
+		
+	var bone_count := source_skeleton.get_bone_count()
 	var new_bone_poses: Array[VbgSavedBonePose] = []
 	new_bone_poses.resize(bone_count)
 
 	for bone_index in bone_count:
 		var bone_pose := VbgSavedBonePose.new()
-		bone_pose.rotation = skeleton.get_bone_pose_rotation(bone_index)
-		bone_pose.position = skeleton.get_bone_pose_position(bone_index)
-		bone_pose.scale = skeleton.get_bone_pose_scale(bone_index)
+		bone_pose.rotation = source_skeleton.get_bone_pose_rotation(bone_index)
+		bone_pose.position = source_skeleton.get_bone_pose_position(bone_index)
+		bone_pose.scale = source_skeleton.get_bone_pose_scale(bone_index)
 		new_bone_poses[bone_index] = bone_pose
 
 	bone_poses = new_bone_poses
+
+
+func apply_to_compatible_skeleton(target_skeleton: Skeleton3D):
+	# NOTE: It is assumed this skeleton is compatible with the original one in terms of bone
+	#  order and bone count.
+
+	var bone_count := target_skeleton.get_bone_count()
+	for bone in bone_count:
+		var saved_bone_pose := bone_poses[bone]
+		if saved_bone_pose:
+			skeleton.set_bone_pose_rotation(bone, saved_bone_pose.rotation)
+			skeleton.set_bone_pose_position(bone, saved_bone_pose.position)
+			skeleton.set_bone_pose_scale(bone, saved_bone_pose.scale)

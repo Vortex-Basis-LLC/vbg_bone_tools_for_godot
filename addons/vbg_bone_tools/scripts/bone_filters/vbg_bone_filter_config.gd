@@ -21,10 +21,8 @@
 # SOFTWARE.
 
 @tool
-class_name VbgSavedBonePose extends RefCounted
+class_name VbgBoneFilterConfig extends Resource
 
-# Saved pose state for a single bone.
 
-var rotation: Quaternion = Quaternion.IDENTITY
-var position: Vector3 = Vector3.ZERO
-var scale: Vector3 = Vector3.ONE
+@export var default_weight: float = 1.0
+@export var entries: Array[VbgBoneFilterConfigEntry]

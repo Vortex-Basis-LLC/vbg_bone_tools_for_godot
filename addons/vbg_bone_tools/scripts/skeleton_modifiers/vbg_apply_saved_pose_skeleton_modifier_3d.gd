@@ -21,10 +21,20 @@
 # SOFTWARE.
 
 @tool
-class_name VbgSavedBonePose extends RefCounted
+class_name VbgApplySavedPoseSkeletonModifier3d extends SkeletonModifier3D
 
-# Saved pose state for a single bone.
+@export var _saved_pose_node: VbgSaveSkeletonPoseNode
 
-var rotation: Quaternion = Quaternion.IDENTITY
-var position: Vector3 = Vector3.ZERO
-var scale: Vector3 = Vector3.ONE
+
+func _process_modification() -> void:
+	var saved_pose: VbgSavedSkeletonPose = null
+
+	if _saved_pose_node:
+		saved_pose = _saved_pose_node.saved_skeleton_pose
+
+	if !saved_pose:
+		return
+
+	var skeleton := get_skeleton()
+	if skeleton:
+		saved_pose.apply_to_compatible_skeleton(skeleton)

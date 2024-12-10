@@ -36,19 +36,48 @@ class_name VbgBlendSkeletonModifier3d extends VbgBaseAnimSkeletonModifier3d
 
 # TODO: Provide a resource that names a bone and a weight. Allow a list to be provided.
 
-@export_enum(" ") var filter_to_bone_branch: String = &"":
+
+@export var bone_filter: VbgBoneFilterConfig = null:
 	set(value):
-		filter_to_bone_branch = value
-		_update_included_bones()
+		bone_filter = value
+		_refesh_bone_filter_obj()
 
-var _bone_inclusion_map: Dictionary = {}
 
+###
+### Add Bone Filter section is just a helper for adding bones to the bone_filter.
+###
+@export_category("Add Bone Filter")
+@export_enum(" ") var filter_bone_name: String = &"":
+	set(value):
+		filter_bone_name = value
+
+@export var add_bone_filter_entry: bool:
+	set(value):
+		if !bone_filter:
+			bone_filter = VbgBoneFilterConfig.new()
+			bone_filter.default_weight = 0
+			bone_filter.entries = []
+
+		var entry = VbgBoneFilterConfigEntry.new()
+		entry.bone_name = filter_bone_name
+		entry.weight = 0.0
+		entry.include_children = true
+		bone_filter.entries.append(entry)
+		_refesh_bone_filter_obj()
+
+
+@export_category("Debug")
+@export var refresh_bone_filter: bool:
+	set(value):
+		_refesh_bone_filter_obj()
+
+
+var _bone_filter_obj: VbgBoneFilter
 var _cached_track_to_bone_index: VbgTrackToBoneIndex
-
 
 func _validate_property(property: Dictionary) -> void:
 	if Engine.is_editor_hint():
-		if property.name == "filter_to_bone_branch":
+		if property.name == "filter_bone_name":
 			var skeleton := get_skeleton()
 			if skeleton:
 				# Provide dynamic drop down list for the animation names.
@@ -61,9 +90,13 @@ func _validate_property(property: Dictionary) -> void:
 
 
 func _ready() -> void:
-	_update_included_bones()
+	_refesh_bone_filter_obj()
 
 	super._ready()
+
+
+func _refesh_bone_filter_obj() -> void:
+	_bone_filter_obj = VbgBoneFilter.new(get_skeleton(), bone_filter)
 
 
 func _get_animation() -> Animation:
@@ -94,34 +127,6 @@ func get_default_anim_loop_mode() -> VbgAnimRef.VbgLoopMode:
 		return VbgAnimRef.VbgLoopMode.LOOP
 	else:
 		return VbgAnimRef.VbgLoopMode.NO_LOOP
-
-
-func _update_included_bones() -> void:
-	_bone_inclusion_map = {}
-	if !filter_to_bone_branch.is_empty():
-		var skeleton := get_skeleton()
-		var filter_bone := skeleton.find_bone(filter_to_bone_branch)
-		var bone_count := skeleton.get_bone_count()
-		for bone_index in bone_count:
-			if _is_bone_same_or_ancestor(filter_bone, bone_index):
-				_bone_inclusion_map[bone_index] = true
-
-
-func _is_bone_included(bone_index: int) -> bool:
-	if filter_to_bone_branch.is_empty() || _bone_inclusion_map.has(bone_index):
-		return true
-	else:
-		return false
-
-
-func _is_bone_same_or_ancestor(ancestor_bone: int, other_bone: int) -> bool:
-	if ancestor_bone == other_bone:
-		return true
-	var other_bone_parent := get_skeleton().get_bone_parent(other_bone)
-	if other_bone_parent == -1:
-		return false
-	else:
-		return _is_bone_same_or_ancestor(ancestor_bone, other_bone_parent)
 
 
 func _get_cached_track_to_bone_index(anim: Animation) -> VbgTrackToBoneIndex:
@@ -167,10 +172,8 @@ func _apply_bone_modifications() -> void:
 	var bone_count := skeleton.get_bone_count()
 	for bone in bone_count:
 		var bone_blend_weight := blend_weight_to_use
-
-		if !_is_bone_included(bone):
-			# We won't apply the new animation, but we should still restore the saved pose.
-			bone_blend_weight = 0.0
+		if _bone_filter_obj:
+			bone_blend_weight *= _bone_filter_obj.get_bone_weight(bone)
 
 		var rotation_track := track_to_bone_index.get_track_for_bone_rotation(bone)
 		var position_track := track_to_bone_index.get_track_for_bone_position(bone)
