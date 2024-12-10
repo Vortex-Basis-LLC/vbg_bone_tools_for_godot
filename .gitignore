@@ -1,3 +1,6 @@
+.DS_Store
+models
+
 # Godot 4+ specific ignores
 .godot/
 
