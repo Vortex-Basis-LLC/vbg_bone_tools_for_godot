@@ -32,6 +32,11 @@ var bone_poses: Array[VbgSavedBonePose]
 
 
 
+func _ensure_bone_poses_array_exists() -> void:
+	if !bone_poses:
+		save_current_pose()
+
+
 func clone() -> VbgSavedSkeletonPose:
 	var copy := VbgSavedSkeletonPose.new()
 	copy.skeleton = skeleton
@@ -94,6 +99,8 @@ func blend_to_pose(other_pose: VbgSavedSkeletonPose, weight: float, bone_filter:
 		return
 
 	var bone_count := skeleton.get_bone_count()
+	_ensure_bone_poses_array_exists()
+	
 	for bone in bone_count:
 		var bone_blend_weight := weight
 		if bone_filter:
@@ -112,6 +119,8 @@ func blend_to_pose(other_pose: VbgSavedSkeletonPose, weight: float, bone_filter:
 
 func blend_to_anim_frame(anim: Animation, frame_anim_time: float, track_to_bone_index: VbgTrackToBoneIndex, weight: float, bone_filter: VbgBoneFilter) -> void:
 	var bone_count := skeleton.get_bone_count()
+	_ensure_bone_poses_array_exists()
+	
 	for bone in bone_count:
 		var bone_blend_weight := weight
 		if bone_filter:
