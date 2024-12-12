@@ -81,7 +81,10 @@ func _assign_bone_map_to_selected_animation_libraries(bone_map: BoneMap) -> void
 			config.set_value("params", "_subresources", subresources)
 			config.save(path + ".import")
 			assigned_bone_map_count = assigned_bone_map_count + 1
-	
+
+	# Trigger reimport of the animation libraries.	
+	EditorInterface.get_resource_filesystem().scan_sources()
+
 	print("Bone map assignment complete.")
 	_alert(str(assigned_bone_map_count) + " bone map(s) assigned.")
 
@@ -89,6 +92,6 @@ func _assign_bone_map_to_selected_animation_libraries(bone_map: BoneMap) -> void
 func _alert(message: String) -> void:
 	var dialog := AcceptDialog.new()
 	dialog.dialog_text = message
-	dialog.confirmed.connect(func(): print("Closed"))
+	dialog.confirmed.connect(func(): dialog.queue_free())
 	add_child(dialog)
 	dialog.popup_centered()
