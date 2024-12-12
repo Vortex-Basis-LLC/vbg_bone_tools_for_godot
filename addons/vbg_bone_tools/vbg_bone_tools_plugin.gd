@@ -24,11 +24,30 @@
 extends EditorPlugin
 
 
+const MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS: String = "VBG Bone Tools - Bulk Assign Bone Map To AnimLibs"
+
+
+var bone_map_assigner_window: VbgBoneMapAssignerWindow
+
+
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
-	pass
+	add_tool_menu_item(MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS, _show_bone_map_assigner_window)
 
 
 func _exit_tree() -> void:
 	# Clean-up of the plugin goes here.
-	pass
+	if bone_map_assigner_window:
+		bone_map_assigner_window.free()
+		bone_map_assigner_window = null
+
+	remove_tool_menu_item(MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS)
+
+
+func _show_bone_map_assigner_window() -> void:
+	if !bone_map_assigner_window:
+		bone_map_assigner_window = preload("res://addons/vbg_bone_tools/assets/anim_libs/bone_map_assigner/vbg_bone_map_assigner_window.tscn").instantiate() as VbgBoneMapAssignerWindow
+		bone_map_assigner_window.size = Vector2i(500, 400)
+		get_editor_interface().popup_dialog_centered(bone_map_assigner_window)
+	else:
+		bone_map_assigner_window.show()
