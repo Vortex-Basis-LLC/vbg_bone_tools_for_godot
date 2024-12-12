@@ -26,25 +26,30 @@ class_name VbgWalkRunSkeletonModifier3d extends SkeletonModifier3D
 # Blend between walk and run animations depending on speed.
 
 @export var walk_anim_ref: VbgAnimRef
-@export var walk_anim_speed: float = 1.65
+@export var walk_anim_speed: float = -1
 
 @export var run_anim_ref: VbgAnimRef
-@export var run_anim_speed: float = 2.76
+@export var run_anim_speed: float = -1
 
-@export var current_velocity: float = 1.65
-
-var _walk_length: float
-var _run_length: float
+@export var current_velocity: float = 0
 
 var _walk_cycle_ratio: float = 0.0
 var _last_ticks_usec: int = 0
 
 func _ready() -> void:
 	_last_ticks_usec = Time.get_ticks_usec()
+	_reprocess_anims()
+
 
 func _reprocess_anims():
-	_walk_length = walk_anim_ref.get_animation().length
-	_run_length = run_anim_ref.get_animation().length
+	if walk_anim_ref:
+		var walk_anim := walk_anim_ref.get_animation()
+		walk_anim_speed = VbgLocomotionAnimSpeedAnalyzer.detect_speed_from_left_toes(get_skeleton(), walk_anim)
+
+	if run_anim_ref:
+		var run_anim := run_anim_ref.get_animation()
+		run_anim_speed = VbgLocomotionAnimSpeedAnalyzer.detect_speed_from_left_toes(get_skeleton(), run_anim)
+
 
 func _process_modification() -> void:
 	var current_ticks_usec = Time.get_ticks_usec()
@@ -65,16 +70,11 @@ func _process_modification() -> void:
 
 	var saved_pose := VbgSavedSkeletonPose.new()
 	saved_pose.skeleton = skeleton
-	#saved_pose.save_current_pose()
-
-	if current_velocity <= 0:
-		# TODO: Add idle and reverse...
-		return
 
 	# Figure out how far to advance the walk cycle.
 	if current_velocity <= walk_anim_speed:
 		# Time-scaled walk.
-		var time_scalar := walk_anim_speed / current_velocity
+		var time_scalar :=  walk_anim_speed / current_velocity
 		_walk_cycle_ratio = _walk_cycle_ratio + (delta / (walk_anim.length * time_scalar))
 	elif current_velocity <= run_anim_speed:
 		# Blended-version of walk and run.
@@ -93,7 +93,10 @@ func _process_modification() -> void:
 	var walk_anim_time := walk_anim.length * walk_cycle_ratio_to_use
 	var run_anim_time := run_anim.length * walk_cycle_ratio_to_use
 
+	# TODO: Save the VbgTrackToBoneIndex instances when animations are set or setup in _ready
+
 	if current_velocity <= walk_anim_speed:
+		var walk_blend_weight := (current_velocity / walk_anim_speed)
 		saved_pose.blend_to_anim_frame(walk_anim, walk_anim.length * walk_cycle_ratio_to_use, VbgTrackToBoneIndex.new(skeleton, walk_anim), 1.0, null)
 	elif current_velocity < run_anim_speed:
 		# Show blended version of walk and run.
@@ -106,3 +109,5 @@ func _process_modification() -> void:
 	
 	# Apply the blended pose.
 	saved_pose.apply_to_compatible_skeleton(skeleton)
+
+
