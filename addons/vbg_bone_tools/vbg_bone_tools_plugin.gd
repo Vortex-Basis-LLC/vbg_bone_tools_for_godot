@@ -25,14 +25,17 @@ extends EditorPlugin
 
 
 const MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS: String = "VBG Bone Tools - Bulk Assign Bone Map To AnimLibs"
+const MENU_ITEM_BULK_ASSIGN_REST_POSE_TO_ANIM_LIBS: String = "VBG Bone Tools - Bulk Assign Rest Pose To AnimLibs"
 
 
 var bone_map_assigner_window: VbgBoneMapAssignerWindow
+var rest_pose_assigner_window: VbgRestPoseAssignerWindow
 
 
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
 	add_tool_menu_item(MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS, _show_bone_map_assigner_window)
+	add_tool_menu_item(MENU_ITEM_BULK_ASSIGN_REST_POSE_TO_ANIM_LIBS, _show_rest_pose_assigner_window)
 
 
 func _exit_tree() -> void:
@@ -41,8 +44,12 @@ func _exit_tree() -> void:
 		bone_map_assigner_window.free()
 		bone_map_assigner_window = null
 
-	remove_tool_menu_item(MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS)
+	if rest_pose_assigner_window:
+		rest_pose_assigner_window.free()
+		rest_pose_assigner_window = null
 
+	remove_tool_menu_item(MENU_ITEM_BULK_ASSIGN_BONE_MAP_TO_ANIM_LIBS)
+	remove_tool_menu_item(MENU_ITEM_BULK_ASSIGN_REST_POSE_TO_ANIM_LIBS)
 
 func _show_bone_map_assigner_window() -> void:
 	if !bone_map_assigner_window:
@@ -51,3 +58,11 @@ func _show_bone_map_assigner_window() -> void:
 		get_editor_interface().popup_dialog_centered(bone_map_assigner_window)
 	else:
 		bone_map_assigner_window.show()
+
+func _show_rest_pose_assigner_window() -> void:
+	if !rest_pose_assigner_window:
+		rest_pose_assigner_window = preload("res://addons/vbg_bone_tools/assets/anim_libs/bone_map_assigner/vbg_rest_pose_assigner_window.tscn").instantiate() as VbgRestPoseAssignerWindow
+		rest_pose_assigner_window.size = Vector2i(500, 400)
+		get_editor_interface().popup_dialog_centered(rest_pose_assigner_window)
+	else:
+		rest_pose_assigner_window.show()

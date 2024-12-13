@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3 uid="uid://caou38e5ln561"]
+
+[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/anim_libs/bone_map_assigner/vbg_rest_pose_assigner_window.gd" id="1_fq7wd"]
+
+[node name="Window" type="Window"]
+initial_position = 4
+size = Vector2i(600, 400)
+transient = true
+transient_to_focused = true
+script = ExtResource("1_fq7wd")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(500, 300)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Select the animation libraries in FileSystem panel to which you want to assign the rest pose below.
+"
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Select External Rest Pose Animation"
+
+[node name="AnimPickerContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ButtonAssignRestPose" type="Button" parent="MarginContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Assign Rest Pose"
+
+[node name="ButtonClose" type="Button" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Close"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer2/VBoxContainer/ButtonAssignRestPose" to="." method="_on_button_assign_rest_pose_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer2/ButtonClose" to="." method="_on_button_close_pressed"]
