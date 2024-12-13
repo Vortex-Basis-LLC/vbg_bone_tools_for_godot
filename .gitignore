@@ -1,5 +1,5 @@
 .DS_Store
-models
+/models/
 
 # Godot 4+ specific ignores
 .godot/
