@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3 uid="uid://2mwsegtg4e4l"]
+
+[ext_resource type="PackedScene" uid="uid://57vx1lms6d3e" path="res://assets/models/simple_character/simple_character.tscn" id="1_7eqtq"]
+[ext_resource type="Material" uid="uid://1swqqn8wobs1" path="res://assets/materials/voronoi_pattern.tres" id="1_g4gu8"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ua34d"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_20w68"]
+sky_material = SubResource("ProceduralSkyMaterial_ua34d")
+
+[sub_resource type="Environment" id="Environment_vo83v"]
+background_mode = 2
+sky = SubResource("Sky_20w68")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_v4f0c"]
+size = Vector2(100, 100)
+
+[sub_resource type="PrismMesh" id="PrismMesh_gkk7p"]
+left_to_right = 0.4
+size = Vector3(20, 20, 10)
+
+[node name="WalkingLevel" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vo83v")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_v4f0c")
+surface_material_override/0 = ExtResource("1_g4gu8")
+
+[node name="Rock" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.90317, 0, -17.0827)
+mesh = SubResource("PrismMesh_gkk7p")
+
+[node name="simple_character" parent="." instance=ExtResource("1_7eqtq")]
+
+[node name="GeneralSkeleton" parent="simple_character/root" index="0"]
+bones/1/position = Vector3(-0.000580591, 0.90251, -0.0151174)
+bones/1/rotation = Quaternion(0.0295254, -2.11212e-06, -6.23884e-08, 0.999564)
+bones/2/rotation = Quaternion(0.0108735, 0.195848, 0.979411, -0.0477403)
+bones/3/rotation = Quaternion(0.0288806, 0.978525, -0.203963, 0.00729879)
+bones/4/rotation = Quaternion(-0.0260506, 0.680218, -0.732535, -0.0042467)
+bones/4/scale = Vector3(0.99999, 0.999998, 1)
+bones/5/rotation = Quaternion(-2.00461e-06, 1, -2.2769e-05, 2.81594e-06)
+bones/6/rotation = Quaternion(-0.0439241, 0.151963, 0.987152, 0.0225552)
+bones/7/rotation = Quaternion(-0.0338342, 0.970406, -0.238946, -0.00855063)
+bones/8/rotation = Quaternion(-0.00823302, 0.619422, -0.784877, 0.0147055)
+bones/8/scale = Vector3(0.99999, 0.999998, 1)
+bones/9/rotation = Quaternion(9.98353e-07, 1, -2.52426e-05, -3.84326e-06)
+bones/10/rotation = Quaternion(-0.0267011, 2.11128e-06, 5.6638e-08, 0.999644)
+bones/11/rotation = Quaternion(-1.13687e-13, 1.81899e-12, 2.91038e-11, 1)
+bones/16/rotation = Quaternion(0.00139147, 0.799736, -0.598119, -0.0517192)
+bones/17/rotation = Quaternion(0.015449, 0.707353, -0.0154495, 0.706523)
+bones/20/scale = Vector3(1.00001, 0.999995, 0.999995)
+bones/21/scale = Vector3(1.00002, 0.999986, 0.999998)
+bones/35/rotation = Quaternion(-0.00144956, 0.780323, -0.62305, 0.053875)
+bones/36/rotation = Quaternion(0.0548127, -0.706451, 0.0548124, 0.703504)
+bones/39/scale = Vector3(1.00001, 0.999994, 0.999994)
+bones/40/scale = Vector3(1.00002, 0.999986, 0.999998)
+
+[node name="Camera3D" type="Camera3D" parent="simple_character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.11996, 3.00298)
+
+[editable path="simple_character"]

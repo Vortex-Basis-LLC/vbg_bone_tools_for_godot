@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://1swqqn8wobs1"]
+
+[ext_resource type="Shader" path="res://assets/shaders/voronoi_pattern.gdshader" id="1_m2l7u"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_m2l7u")
+shader_parameter/uv_scale = Vector2(300, 300)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/min_value = 0.05
+shader_parameter/max_value = 0.1
+shader_parameter/mod_cell_coords_with_scale = true
