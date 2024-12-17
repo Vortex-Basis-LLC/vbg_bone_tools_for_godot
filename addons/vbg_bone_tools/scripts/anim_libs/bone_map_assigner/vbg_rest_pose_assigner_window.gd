@@ -81,7 +81,7 @@ func _assign_rest_pose_to_selected_animation_libraries(anim: Animation) -> void:
 			subresources["nodes"]["PATH:Skeleton3D"]["rest_pose/load_pose"] = 2
 
 			config.set_value("params", "_subresources", subresources)
-			config.save(path + ".import")
+			config.save(config_path)
 			assigned_rest_pose_count = assigned_rest_pose_count + 1
 
 	# Trigger reimport of the animation libraries.	

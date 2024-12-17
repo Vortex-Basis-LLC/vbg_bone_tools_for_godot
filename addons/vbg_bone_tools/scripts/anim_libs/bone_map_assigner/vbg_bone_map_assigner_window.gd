@@ -79,7 +79,7 @@ func _assign_bone_map_to_selected_animation_libraries(bone_map: BoneMap) -> void
 			subresources["nodes"]["PATH:Skeleton3D"]["retarget/bone_map"] = bone_map
 
 			config.set_value("params", "_subresources", subresources)
-			config.save(path + ".import")
+			config.save(config_path)
 			assigned_bone_map_count = assigned_bone_map_count + 1
 
 	# Trigger reimport of the animation libraries.	
