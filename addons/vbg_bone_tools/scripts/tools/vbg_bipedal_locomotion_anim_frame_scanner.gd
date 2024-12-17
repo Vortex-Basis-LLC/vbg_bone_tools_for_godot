@@ -147,12 +147,27 @@ func first_pass() -> void:
 	var walk_cycle_start_frame: int = round((out_walk_cycle_start_ratio_offset * anim.length) / anim.step)
 	var toe_going_back_frame_index: int = _find_frame_left_toe_starting_to_go_back(walk_cycle_start_frame, _anim_frame_count)
 
-	# We'll look at z position of toe going back and go forward 25% of frames) and use change in toe's z position to
-	# estimate ground speed.
+	# We'll look at z position of toe going back and go forward 25% of frames and use change in toe's z position to
+	# estimate ground speed as our backup guess. We'll try using a possibly better method down below.
 	var toe_z_1 = _find_left_toe_pos_for_frame(toe_going_back_frame_index).z
 	var go_forward_frames := roundf(_anim_frame_count * 0.25)
 	var toe_z_2 = _find_left_toe_pos_for_frame(toe_going_back_frame_index + go_forward_frames).z
 	out_estimated_speed_by_left_toe = absf(toe_z_1 - toe_z_2) / (go_forward_frames * anim.step)
+
+	# Second attempt to get speed, but this one relies on foot rising a certain amount off of the floor.
+	# The goal is to cover more of the time that the foot is on the floor.
+	var left_toe_y_range := _max_left_toe_pos.y - _min_left_toe_pos.y
+	var left_toe_rise_threshold := left_toe_y_range * 0.05
+	var start_toe_y := _find_left_toe_pos_for_frame(toe_going_back_frame_index).y
+	for i in _anim_frame_count:
+		var new_y : = _find_left_toe_pos_for_frame(toe_going_back_frame_index + i).y
+		# We are looking for a frame where the toe has come off of the ground by the indicated threshold.
+		if new_y > (start_toe_y + left_toe_rise_threshold):
+			var left_foot_off_ground_frame := _get_frame_index_to_use(toe_going_back_frame_index + i)
+			var new_toe_z_2 = _find_left_toe_pos_for_frame(left_foot_off_ground_frame - 1).z
+			var new_out_estimated_speed_by_left_toe = absf(toe_z_1 - new_toe_z_2) / ((i - 1) * anim.step)
+			out_estimated_speed_by_left_toe = new_out_estimated_speed_by_left_toe
+			break
 
 
 func _get_frame_index_to_use(frame: int) -> int:
