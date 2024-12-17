@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://2mwsegtg4e4l"]
+[gd_scene load_steps=10 format=3 uid="uid://2mwsegtg4e4l"]
 
 [ext_resource type="Material" uid="uid://1swqqn8wobs1" path="res://assets/materials/voronoi_pattern.tres" id="1_g4gu8"]
 [ext_resource type="PackedScene" uid="uid://djlr3mlfno2ro" path="res://characters/simple_movable_character.tscn" id="2_1o7d3"]
@@ -20,6 +20,9 @@ glow_enabled = true
 left_to_right = 0.4
 size = Vector3(20, 20, 10)
 
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_4lfij"]
+data = PackedVector3Array(-2, 10, 5, 10, -10, 5, -10, -10, 5, -2, 10, -5, -10, -10, -5, 10, -10, -5, -2, 10, 5, -2, 10, -5, 10, -10, 5, -2, 10, -5, 10, -10, -5, 10, -10, 5, -2, 10, -5, -2, 10, 5, -10, -10, -5, -2, 10, 5, -10, -10, 5, -10, -10, -5, -10, -10, 5, 10, -10, 5, -10, -10, -5, 10, -10, 5, 10, -10, -5, -10, -10, -5)
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_v4f0c"]
 size = Vector2(100, 100)
 
@@ -39,6 +42,11 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.90317, 0, -17.0827)
 mesh = SubResource("PrismMesh_gkk7p")
 
+[node name="StaticBody3D" type="StaticBody3D" parent="Rock"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_4lfij")
+
 [node name="Floor" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_v4f0c")
 surface_material_override/0 = ExtResource("1_g4gu8")
@@ -49,6 +57,8 @@ surface_material_override/0 = ExtResource("1_g4gu8")
 shape = SubResource("ConcavePolygonShape3D_2j42j")
 
 [node name="simple_character" parent="." instance=ExtResource("2_1o7d3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.64918, 0)
+
+[node name="WalkRunMod" parent="simple_character/Visuals/GeneralSkeleton" index="9"]
+current_velocity = 0.0
 
 [editable path="simple_character"]
