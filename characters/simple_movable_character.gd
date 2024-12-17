@@ -40,7 +40,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("run"):
 		target_velocity *= 3.0
 
-	velocity = velocity.move_toward(target_velocity, abs(delta * 5.0))
+	velocity = velocity.move_toward(target_velocity, abs(delta * 10.0))
 
 	var dir := velocity.normalized()
 	if velocity.length() > 0.01:
@@ -57,11 +57,11 @@ func _physics_process(delta: float) -> void:
 	cam_pos.z += 3.0
 	get_viewport().get_camera_3d().global_position = cam_pos
 
-	if velocity.length() > 0.01:
-		_walk_run_mod.influence = 1.0
+	if velocity.length() > 0.05:
+		_walk_run_mod.influence = minf(1.0, _walk_run_mod.influence + (delta / 0.2))
 		_walk_run_mod.current_velocity = velocity.length()
 	else:
-		_walk_run_mod.influence = 0.0
+		_walk_run_mod.influence = maxf(0.0, _walk_run_mod.influence - (delta / 0.2))
 
 	move_and_slide()
 
