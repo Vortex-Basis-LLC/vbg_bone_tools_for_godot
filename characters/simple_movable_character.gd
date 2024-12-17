@@ -36,9 +36,11 @@ func _physics_process(delta: float) -> void:
 
 	var move_dir := _get_camera_relative_move_vector(input_dir, get_viewport().get_camera_3d())
 
-	target_velocity = move_dir * 1.6
+	target_velocity = move_dir
 	if Input.is_action_pressed("run"):
-		target_velocity *= 3.0
+		target_velocity *= _walk_run_mod._run_anim_speed_to_use
+	else:
+		target_velocity *= _walk_run_mod._walk_anim_speed_to_use
 
 	velocity = velocity.move_toward(target_velocity, abs(delta * 10.0))
 
@@ -53,8 +55,8 @@ func _physics_process(delta: float) -> void:
 
 	# Have camera follow character.
 	var cam_pos := global_position
-	cam_pos.y += 1.5
-	cam_pos.z += 3.0
+	cam_pos.y += 1.75
+	cam_pos.z += 4.0
 	get_viewport().get_camera_3d().global_position = cam_pos
 
 	if velocity.length() > 0.05:
