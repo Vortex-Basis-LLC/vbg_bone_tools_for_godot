@@ -92,8 +92,8 @@ void fragment() {
 	vec2 uv_to_use = UV * uv_scale + uv_offset;
 	get_voronoi_grid_values(uv_to_use, dist, cell_rand);
 	//ALBEDO = vec3(1.0 - clamp(dist, 0., 1.), cell_rand, 1.);
-	
+
 	float value = mix(min_value, max_value, cell_rand);
-	
+
 	ALBEDO = vec3(value);
 }

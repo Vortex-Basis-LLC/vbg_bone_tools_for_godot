@@ -35,6 +35,8 @@ class_name VbgWalkRunSkeletonModifier3d extends SkeletonModifier3D
 
 var _walk_cycle_ratio: float = 0.0
 var _last_ticks_usec: int = 0
+var _walk_anim_speed_to_use: float = 1
+var _run_anim_speed_to_use: float = 2
 
 func _ready() -> void:
 	_last_ticks_usec = Time.get_ticks_usec()
@@ -42,13 +44,22 @@ func _ready() -> void:
 
 
 func _reprocess_anims():
-	if walk_anim_ref:
+	if walk_anim_ref && walk_anim_speed <= -1:
 		var walk_anim := walk_anim_ref.get_animation()
-		walk_anim_speed = VbgLocomotionAnimSpeedAnalyzer.detect_speed_from_left_toes(get_skeleton(), walk_anim)
+		_walk_anim_speed_to_use = VbgLocomotionAnimSpeedAnalyzer.detect_speed_from_left_toes(get_skeleton(), walk_anim, 0.1)
+	else:
+		_walk_anim_speed_to_use = walk_anim_speed
 
-	if run_anim_ref:
+	if run_anim_ref && run_anim_speed <= -1:
 		var run_anim := run_anim_ref.get_animation()
-		run_anim_speed = VbgLocomotionAnimSpeedAnalyzer.detect_speed_from_left_toes(get_skeleton(), run_anim)
+		_run_anim_speed_to_use = VbgLocomotionAnimSpeedAnalyzer.detect_speed_from_left_toes(get_skeleton(), run_anim, 0.08)
+	else:
+		_run_anim_speed_to_use = run_anim_speed
+
+	if _walk_anim_speed_to_use <= 0:
+		_walk_anim_speed_to_use = 1
+	if _run_anim_speed_to_use <= 0:
+		_run_anim_speed_to_use = 2
 
 
 func _process_modification() -> void:
@@ -72,18 +83,18 @@ func _process_modification() -> void:
 	saved_pose.skeleton = skeleton
 
 	# Figure out how far to advance the walk cycle.
-	if current_velocity <= walk_anim_speed:
+	if current_velocity <= _walk_anim_speed_to_use:
 		# Time-scaled walk.
-		var time_scalar :=  walk_anim_speed / current_velocity
+		var time_scalar :=  _walk_anim_speed_to_use / current_velocity
 		_walk_cycle_ratio = _walk_cycle_ratio + (delta / (walk_anim.length * time_scalar))
-	elif current_velocity <= run_anim_speed:
+	elif current_velocity <= _run_anim_speed_to_use:
 		# Blended-version of walk and run.
-		var run_blend_weight := (current_velocity - walk_anim_speed) / (run_anim_speed - walk_anim_speed)
-		var time_scalar := float(lerp(walk_anim_speed, run_anim_speed, run_blend_weight)) / current_velocity
+		var run_blend_weight := (current_velocity - _walk_anim_speed_to_use) / (_run_anim_speed_to_use - _walk_anim_speed_to_use)
+		var time_scalar := float(lerp(_walk_anim_speed_to_use, _run_anim_speed_to_use, run_blend_weight)) / current_velocity
 		_walk_cycle_ratio = _walk_cycle_ratio + (delta / (walk_anim.length * time_scalar))
 	else:
 		# Time-scaled run.
-		var time_scalar := run_anim_speed / current_velocity
+		var time_scalar := _run_anim_speed_to_use / current_velocity
 		_walk_cycle_ratio = _walk_cycle_ratio + (delta / (run_anim.length * time_scalar))
 
 	var walk_cycle_ratio_to_use := fmod(_walk_cycle_ratio, 1.0)
@@ -95,12 +106,12 @@ func _process_modification() -> void:
 
 	# TODO: Save the VbgTrackToBoneIndex instances when animations are set or setup in _ready
 
-	if current_velocity <= walk_anim_speed:
-		var walk_blend_weight := (current_velocity / walk_anim_speed)
+	if current_velocity <= _walk_anim_speed_to_use:
+		var walk_blend_weight := (current_velocity / _walk_anim_speed_to_use)
 		saved_pose.blend_to_anim_frame(walk_anim, walk_anim.length * walk_cycle_ratio_to_use, VbgTrackToBoneIndex.new(skeleton, walk_anim), 1.0, null)
-	elif current_velocity < run_anim_speed:
+	elif current_velocity < _run_anim_speed_to_use:
 		# Show blended version of walk and run.
-		var run_blend_weight := (current_velocity - walk_anim_speed) / (run_anim_speed - walk_anim_speed)
+		var run_blend_weight := (current_velocity - _walk_anim_speed_to_use) / (_run_anim_speed_to_use - _walk_anim_speed_to_use)
 		saved_pose.blend_to_anim_frame(walk_anim, walk_anim_time, VbgTrackToBoneIndex.new(skeleton, walk_anim), 1.0, null)
 		saved_pose.blend_to_anim_frame(run_anim, run_anim_time, VbgTrackToBoneIndex.new(skeleton, run_anim), run_blend_weight, null)
 	else:

@@ -50,7 +50,6 @@ var out_estimated_speed_by_left_toe: float
 
 func first_pass() -> void:
 	_anim_frame_count = round(anim.length / anim.step) + 1
-	prints("_anim_frame_count", _anim_frame_count)
 
 	var anim_pose := VbgSavedSkeletonPose.new()
 	anim_pose.skeleton = skeleton
@@ -127,13 +126,11 @@ func first_pass() -> void:
 		_max_right_toe_pos.y = min(_max_right_toe_pos.y, right_toe_pos.y)
 		_max_right_toe_pos.z = min(_max_right_toe_pos.z, right_toe_pos.z)
 
-		prints("SCANNING", anim_time, "left:", last_left_lower_leg_pos.z, "right:", last_right_lower_leg_pos.z)
 		if last_left_lower_leg_pos.z >= last_right_lower_leg_pos.z:
 			# Left lower leg was previously in front or even with right lower leg.
 			if right_lower_leg_pos.z > left_lower_leg_pos.z:
 				# Right lower leg is now in front of left lower leg, so the canonical walk cycle should
 				# be considered to start here.
-				prints("cycle start time detected: ", anim_time)
 				out_walk_cycle_start_time = anim_time
 				out_walk_cycle_start_ratio_offset = anim_time / anim.length
 
@@ -149,13 +146,13 @@ func first_pass() -> void:
 	# Scan for foot on ground, starting at left foot moving back (we will look for where the left toe reaches max z then changes direction)
 	var walk_cycle_start_frame: int = round((out_walk_cycle_start_ratio_offset * anim.length) / anim.step)
 	var toe_going_back_frame_index: int = _find_frame_left_toe_starting_to_go_back(walk_cycle_start_frame, _anim_frame_count)
-	prints("LEFT TOE GOING BACK:", toe_going_back_frame_index, toe_going_back_frame_index * anim.step)
 
-	var z_1 = _find_left_toe_pos_for_frame(toe_going_back_frame_index).z
+	# We'll look at z position of toe going back and go forward 25% of frames) and use change in toe's z position to
+	# estimate ground speed.
+	var toe_z_1 = _find_left_toe_pos_for_frame(toe_going_back_frame_index).z
 	var go_forward_frames := roundf(_anim_frame_count * 0.25)
-	var z_2 = _find_left_toe_pos_for_frame(toe_going_back_frame_index + go_forward_frames).z
-	out_estimated_speed_by_left_toe = absf(z_1 - z_2) / (go_forward_frames * anim.step)
-	prints("ESTIMATED SPEED: ", out_estimated_speed_by_left_toe)
+	var toe_z_2 = _find_left_toe_pos_for_frame(toe_going_back_frame_index + go_forward_frames).z
+	out_estimated_speed_by_left_toe = absf(toe_z_1 - toe_z_2) / (go_forward_frames * anim.step)
 
 
 func _get_frame_index_to_use(frame: int) -> int:
