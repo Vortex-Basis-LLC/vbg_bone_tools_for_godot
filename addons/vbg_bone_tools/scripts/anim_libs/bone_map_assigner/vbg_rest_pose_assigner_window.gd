@@ -61,31 +61,12 @@ func _assign_rest_pose_to_selected_animation_libraries(anim: Animation) -> void:
 		if anim_lib:
 			prints("Changing rest pose for anim lib: ", path)
 
-			var config := ConfigFile.new()
-			var config_path := path + ".import"
-			config.load(config_path)
+			var anim_lib_config_editor := VbgAnimLibConfigEditor.open_anim_lib_config(anim_lib)
+			anim_lib_config_editor.set_rest_pose_to_external_animation(anim)
+			anim_lib_config_editor.save_config_changes()
+			anim_lib_config_editor.reimport_file()
 
-			var subresources := config.get_value("params", "_subresources") as Dictionary
-			if subresources:
-				subresources = subresources.duplicate(true)
-			else:
-				subresources = {}
-
-			if !subresources.has("nodes"):
-				subresources["nodes"] = {}
-			if !subresources["nodes"].has("PATH:Skeleton3D"):
-				subresources["nodes"]["PATH:Skeleton3D"] = {}
-
-			subresources["nodes"]["PATH:Skeleton3D"]["rest_pose/external_animation_library"] = anim
-			# TODO: Should this always be 2 when dealing with standalone animation?
-			subresources["nodes"]["PATH:Skeleton3D"]["rest_pose/load_pose"] = 2
-
-			config.set_value("params", "_subresources", subresources)
-			config.save(config_path)
 			assigned_rest_pose_count = assigned_rest_pose_count + 1
-
-	# Trigger reimport of the animation libraries.	
-	EditorInterface.get_resource_filesystem().scan_sources()
 
 	print("Rest pose assignment complete.")
 	_alert(str(assigned_rest_pose_count) + " rest pose(s) assigned.")

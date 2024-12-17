@@ -57,33 +57,20 @@ func _assign_bone_map_to_selected_animation_libraries(bone_map: BoneMap) -> void
 
 	var paths := EditorInterface.get_selected_paths()
 	for path in paths:
-		var anim_lib := load(path) as AnimationLibrary
-		if anim_lib:
-			prints("Changing bone map for anim lib: ", path)
+		var abs_path := ProjectSettings.globalize_path(path)
+		if DirAccess.dir_exists_absolute(abs_path):
+			print("NOTE: Processing all animation libraries from a directory is not yet supported.")
+		else:
+			var anim_lib := load(path) as AnimationLibrary
+			if anim_lib:
+				prints("Changing bone map for anim lib: ", path)
 
-			var config := ConfigFile.new()
-			var config_path := path + ".import"
-			config.load(config_path)
+				var anim_lib_config_editor := VbgAnimLibConfigEditor.open_anim_lib_config(anim_lib)
+				anim_lib_config_editor.set_bone_map(bone_map)
+				anim_lib_config_editor.save_config_changes()
+				anim_lib_config_editor.reimport_file()
 
-			var subresources := config.get_value("params", "_subresources") as Dictionary
-			if subresources:
-				subresources = subresources.duplicate(true)
-			else:
-				subresources = {}
-
-			if !subresources.has("nodes"):
-				subresources["nodes"] = {}
-			if !subresources["nodes"].has("PATH:Skeleton3D"):
-				subresources["nodes"]["PATH:Skeleton3D"] = {}
-
-			subresources["nodes"]["PATH:Skeleton3D"]["retarget/bone_map"] = bone_map
-
-			config.set_value("params", "_subresources", subresources)
-			config.save(config_path)
-			assigned_bone_map_count = assigned_bone_map_count + 1
-
-	# Trigger reimport of the animation libraries.	
-	EditorInterface.get_resource_filesystem().scan_sources()
+				assigned_bone_map_count = assigned_bone_map_count + 1
 
 	print("Bone map assignment complete.")
 	_alert(str(assigned_bone_map_count) + " bone map(s) assigned.")

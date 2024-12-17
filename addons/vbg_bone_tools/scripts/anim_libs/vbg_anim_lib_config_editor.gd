@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+@tool
 class_name VbgAnimLibConfigEditor extends RefCounted
 
 var _anim_lib: AnimationLibrary
@@ -87,3 +88,6 @@ func set_rest_pose_to_external_animation(anim: Animation) -> void:
 
 func save_config_changes():
 	_config.save(_config_path)
+
+func reimport_file():
+	EditorInterface.get_resource_filesystem().reimport_files([_anim_lib.resource_path])
