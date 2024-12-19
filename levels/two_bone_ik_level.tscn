@@ -1,0 +1,136 @@
+[gd_scene load_steps=12 format=3 uid="uid://62tcxp6xo853"]
+
+[ext_resource type="Material" uid="uid://1swqqn8wobs1" path="res://assets/materials/voronoi_pattern.tres" id="1_e2oyv"]
+[ext_resource type="PackedScene" uid="uid://djlr3mlfno2ro" path="res://characters/simple_movable_character.tscn" id="2_jaqcg"]
+[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_two_bone_ik_skeleton_modifier_3d.gd" id="3_4ks1r"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ua34d"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_20w68"]
+sky_material = SubResource("ProceduralSkyMaterial_ua34d")
+
+[sub_resource type="Environment" id="Environment_vo83v"]
+background_mode = 2
+sky = SubResource("Sky_20w68")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PrismMesh" id="PrismMesh_gkk7p"]
+left_to_right = 0.4
+size = Vector3(20, 20, 10)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_4lfij"]
+data = PackedVector3Array(-2, 10, 5, 10, -10, 5, -10, -10, 5, -2, 10, -5, -10, -10, -5, 10, -10, -5, -2, 10, 5, -2, 10, -5, 10, -10, 5, -2, 10, -5, 10, -10, -5, 10, -10, 5, -2, 10, -5, -2, 10, 5, -10, -10, -5, -2, 10, 5, -10, -10, 5, -10, -10, -5, -10, -10, 5, 10, -10, 5, -10, -10, -5, 10, -10, 5, 10, -10, -5, -10, -10, -5)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_v4f0c"]
+size = Vector2(100, 100)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_2j42j"]
+data = PackedVector3Array(50, 0, 50, -50, 0, 50, 50, 0, -50, -50, 0, 50, -50, 0, -50, 50, 0, -50)
+
+[sub_resource type="PrismMesh" id="PrismMesh_850k2"]
+left_to_right = 0.0
+size = Vector3(0.2, 0.1, 0.1)
+
+[node name="WalkingLevel" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vo83v")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Rock" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.90317, 0, -17.0827)
+mesh = SubResource("PrismMesh_gkk7p")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rock"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_4lfij")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_v4f0c")
+surface_material_override/0 = ExtResource("1_e2oyv")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_2j42j")
+
+[node name="simple_character" parent="." instance=ExtResource("2_jaqcg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.591267, -0.00419629, -1.24628)
+
+[node name="Visuals" parent="simple_character" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.270754, 0)
+
+[node name="GeneralSkeleton" parent="simple_character/Visuals" index="0"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.306435, -0.0020988)
+
+[node name="WalkRunMod" parent="simple_character/Visuals/GeneralSkeleton" index="9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0604953, 0.00378108)
+current_velocity = 0.0
+
+[node name="LocalFootTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="10"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.288673, 0.582571, -0.679346)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/LocalFootTarget"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_850k2")
+
+[node name="GlobalHandTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24151, 1.76318, -1.45396)
+top_level = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/GlobalHandTarget"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, -0.1)
+mesh = SubResource("PrismMesh_850k2")
+
+[node name="FootIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="12" node_paths=PackedStringArray("target")]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.288038, 0.164586, 0.151335)
+rotation_edit_mode = 0
+rotation_order = 2
+top_level = false
+visible = true
+visibility_parent = NodePath("")
+active = true
+influence = 1.0
+script = ExtResource("3_4ks1r")
+bone_name = "RightFoot"
+target = NodePath("../LocalFootTarget")
+
+[node name="HandIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="13" node_paths=PackedStringArray("target")]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.423563, -0.325953, 0.386155)
+rotation_edit_mode = 0
+rotation_order = 2
+top_level = false
+visible = true
+visibility_parent = NodePath("")
+active = true
+influence = 1.0
+script = ExtResource("3_4ks1r")
+bone_name = "RightHand"
+target = NodePath("../GlobalHandTarget")
+
+[editable path="simple_character"]
