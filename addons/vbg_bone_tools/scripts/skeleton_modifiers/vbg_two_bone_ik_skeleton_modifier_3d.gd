@@ -23,8 +23,17 @@
 @tool
 class_name VbgTwoBoneIkSkeletonModifier3d extends SkeletonModifier3D
 
-@export var bone_name: String
+@export_enum(" ") var bone_name: String
+
 @export var target: Node3D
+
+
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "bone_name":
+		var skeleton: Skeleton3D = get_skeleton()
+		if skeleton:
+			property.hint = PROPERTY_HINT_ENUM
+			property.hint_string = skeleton.get_concatenated_bone_names()
 
 
 func _process_modification() -> void:
