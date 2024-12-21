@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://62tcxp6xo853"]
+[gd_scene load_steps=13 format=3 uid="uid://62tcxp6xo853"]
 
 [ext_resource type="Material" uid="uid://1swqqn8wobs1" path="res://assets/materials/voronoi_pattern.tres" id="1_e2oyv"]
 [ext_resource type="PackedScene" uid="uid://djlr3mlfno2ro" path="res://characters/simple_movable_character.tscn" id="2_jaqcg"]
 [ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_two_bone_ik_skeleton_modifier_3d.gd" id="3_4ks1r"]
+[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/tools/vbg_axes_visualizer_node.gd" id="4_vyttl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ua34d"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -62,7 +63,7 @@ surface_material_override/0 = ExtResource("1_e2oyv")
 shape = SubResource("ConcavePolygonShape3D_2j42j")
 
 [node name="simple_character" parent="." instance=ExtResource("2_jaqcg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.591267, -0.00419629, -1.47739)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.653545, -0.00419629, -1.47739)
 
 [node name="Visuals" parent="simple_character" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.270754, 0)
@@ -82,7 +83,7 @@ transform = Transform3D(-4.37114e-08, 0.148949, 0.988845, 0, 0.988845, -0.148949
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="GlobalHandTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="11"]
-transform = Transform3D(-0.945581, 0.296248, 0.134602, -0.303442, -0.653455, -0.693485, -0.117487, -0.696588, 0.707788, -0.43371, 1.40194, -1.87991)
+transform = Transform3D(0.803088, -0.290335, -0.520345, 0.521942, -0.0785167, 0.849362, -0.287456, -0.953699, 0.0884822, -0.387656, 1.19753, -1.72812)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/GlobalHandTarget"]
@@ -90,7 +91,7 @@ transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="HeadTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="12"]
-transform = Transform3D(-0.963136, 0.213341, -0.163888, 0.157078, -0.0486109, -0.98639, -0.218404, -0.975768, 0.0133076, -0.42978, 1.50349, -1.43347)
+transform = Transform3D(-0.767367, -0.51503, -0.38196, 0.0156445, 0.580475, -0.814131, 0.641021, -0.63071, -0.43738, -0.682237, 1.6369, -1.55199)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/HeadTarget"]
@@ -130,7 +131,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.14104e-08, 0.00058651, -0.0206553)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.14104e-08, -0.513666, -0.0206553)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -165,5 +166,12 @@ script = ExtResource("3_4ks1r")
 bone_name = "RightHand"
 target = NodePath("../GlobalHandTarget")
 align_target_rotation = true
+
+[node name="HeadAxesVisualizerNode" type="Node3D" parent="simple_character" node_paths=PackedStringArray("node_to_track")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78134, -5.54129, 7.27135)
+script = ExtResource("4_vyttl")
+node_to_track = NodePath("../Visuals/GeneralSkeleton")
+bone_name = "Head"
+marker_offset = 0.19
 
 [editable path="simple_character"]
