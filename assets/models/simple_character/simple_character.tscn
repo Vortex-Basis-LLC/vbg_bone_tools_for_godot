@@ -4,6 +4,7 @@
 [ext_resource type="AnimationLibrary" uid="uid://e4foouo6g404" path="res://assets/anims/simple_character/simple_character_anim_lib.res" id="2_2ep6i"]
 
 [node name="simple_character" instance=ExtResource("1_3eiys")]
+metadata/_edit_group_ = true
 
 [node name="GeneralSkeleton" parent="root" index="0"]
 bones/1/position = Vector3(1.3215e-15, 0.913348, -0.0118245)

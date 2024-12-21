@@ -27,6 +27,8 @@ class_name VbgTwoBoneIkSkeletonModifier3d extends SkeletonModifier3D
 
 @export var target: Node3D
 
+@export var align_target_rotation: bool = false
+
 
 func _validate_property(property: Dictionary) -> void:
 	if property.name == "bone_name":
@@ -141,3 +143,45 @@ func _process_step() -> void:
 	var bone1_local_rotation := skeleton.get_bone_pose_rotation(bone1)
 	var new_bone1_local_rotation := bone1_local_rotation * (ac_ab_adjustment_rotation * swing_rotation)
 	skeleton.set_bone_pose_rotation(bone1, new_bone1_local_rotation)
+
+
+	# See if we should align the move bone to the axes of the target object.
+	if align_target_rotation:
+		_align_bone_to_target_object_axes(skeleton, move_bone, target)
+
+
+
+func _align_bone_to_target_object_axes(skeleton: Skeleton3D, move_bone: int, target: Node3D) -> void:
+	if !skeleton || !target:
+		return
+
+	# This method assumes that forward (z negative) will point down the length of the bone where the bone will point to.
+
+	var parent_bone := skeleton.get_bone_parent(move_bone)
+	var move_bone_rest_pose := skeleton.get_bone_rest(move_bone)
+	var parent_bone_pose := skeleton.get_bone_global_pose(parent_bone)
+	var move_bone_global_pose_with_rest := parent_bone_pose * move_bone_rest_pose
+	var move_bone_global_rest_basis := move_bone_global_pose_with_rest.basis.orthonormalized()
+
+	var target_pose_rel_to_skeleton := (skeleton.global_transform.inverse() * target.global_transform)
+	var target_rel_to_skeleton_basis := target_pose_rel_to_skeleton.basis.orthonormalized()
+
+	# Align the -y axis of bone with z axis of target.
+	var move_bone_global_pose := skeleton.get_bone_global_pose(move_bone)
+	var adjustment := Quaternion(-move_bone_global_rest_basis.y, target_rel_to_skeleton_basis.z)
+	move_bone_global_pose.basis =  Basis(adjustment) * move_bone_global_rest_basis
+
+	# That will align one of the three axes together, but we still need to do one more to properly align the axes.
+
+	# Align x to x.
+	var final_axis := target_rel_to_skeleton_basis.z
+	var final_angle := acos(move_bone_global_pose.basis.x.dot(target_rel_to_skeleton_basis.x))
+	var adjustment2: Quaternion = Quaternion(final_axis, final_angle)
+	var plane := Plane(Vector3.ZERO, target_rel_to_skeleton_basis.z, target_rel_to_skeleton_basis.x)
+	var dist := plane.distance_to(move_bone_global_pose.basis.x)
+	if dist >= 0:
+		adjustment2 = Quaternion(final_axis, final_angle)
+	else:
+		adjustment2 = Quaternion(final_axis, -final_angle)
+	move_bone_global_pose.basis =  Basis(adjustment2) * Basis(adjustment) * move_bone_global_rest_basis
+	skeleton.set_bone_global_pose(move_bone, move_bone_global_pose)

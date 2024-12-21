@@ -62,31 +62,31 @@ surface_material_override/0 = ExtResource("1_e2oyv")
 shape = SubResource("ConcavePolygonShape3D_2j42j")
 
 [node name="simple_character" parent="." instance=ExtResource("2_jaqcg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.591267, -0.00419629, -1.24628)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.591267, -0.00419629, -1.47739)
 
 [node name="Visuals" parent="simple_character" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.270754, 0)
 
 [node name="GeneralSkeleton" parent="simple_character/Visuals" index="0"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.306435, -0.0020988)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.306435, -0.0020988)
 
 [node name="WalkRunMod" parent="simple_character/Visuals/GeneralSkeleton" index="9"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0604953, 0.00378108)
 current_velocity = 0.0
 
 [node name="LocalFootTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="10"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.288673, 0.582571, -0.679346)
+transform = Transform3D(-0.75687, -0.0423545, 0.652193, -0.574975, 0.51759, -0.633645, -0.31073, -0.854581, -0.4161, -0.505479, 0.966743, 0.710837)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/LocalFootTarget"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(-4.37114e-08, 0.148949, 0.988845, 0, 0.988845, -0.148949, -1, -6.51075e-09, -4.32238e-08, 0, 0, 0)
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="GlobalHandTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="11"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.171207, 1.58137, -1.45396)
+transform = Transform3D(0.944548, -0.316923, -0.0859762, 0.304923, 0.94366, -0.128566, 0.121878, 0.0952208, 0.987968, -0.301128, 1.39683, -1.84197)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/GlobalHandTarget"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, -0.1)
+transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933, 0.000367194, -0.999917, -0.0115527, 0.00576392, 4.97401e-05, -0.00177348, -0.111616)
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="FootIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="12" node_paths=PackedStringArray("target")]
@@ -99,7 +99,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.288038, 0.164586, 0.151335)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -110,6 +110,7 @@ influence = 1.0
 script = ExtResource("3_4ks1r")
 bone_name = "RightFoot"
 target = NodePath("../LocalFootTarget")
+align_target_rotation = true
 
 [node name="HandIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="13" node_paths=PackedStringArray("target")]
 _import_path = NodePath("")
@@ -121,7 +122,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.423563, -0.325953, 0.386155)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -132,5 +133,6 @@ influence = 1.0
 script = ExtResource("3_4ks1r")
 bone_name = "RightHand"
 target = NodePath("../GlobalHandTarget")
+align_target_rotation = true
 
 [editable path="simple_character"]
