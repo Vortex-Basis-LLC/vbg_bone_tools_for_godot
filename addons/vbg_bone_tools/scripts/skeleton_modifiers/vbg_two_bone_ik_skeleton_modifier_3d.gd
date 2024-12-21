@@ -155,7 +155,9 @@ func _align_bone_to_target_object_axes(skeleton: Skeleton3D, move_bone: int, tar
 	if !skeleton || !target:
 		return
 
-	# This method assumes that forward (z negative) will point down the length of the bone where the bone will point to.
+	# This method assumes that target's forward (z negative) will point down the length of the bone where the bone will point to.
+	# Since the positive y-axis of the bone points down the bone, we will first align the negative-z axis of target to
+	# the positive z axis of the target. And, then we'll do a roll around that axis to align one of the other axes.
 
 	var parent_bone := skeleton.get_bone_parent(move_bone)
 	var move_bone_rest_pose := skeleton.get_bone_rest(move_bone)
@@ -176,7 +178,9 @@ func _align_bone_to_target_object_axes(skeleton: Skeleton3D, move_bone: int, tar
 	# Align x to x.
 	var final_axis := target_rel_to_skeleton_basis.z
 	var final_angle := acos(move_bone_global_pose.basis.x.dot(target_rel_to_skeleton_basis.x))
-	var adjustment2: Quaternion = Quaternion(final_axis, final_angle)
+	var adjustment2: Quaternion
+	# We need to see which side of the following plane we are on to decide if we need to use that
+	# angle as a positive or negative in our roll.
 	var plane := Plane(Vector3.ZERO, target_rel_to_skeleton_basis.z, target_rel_to_skeleton_basis.x)
 	var dist := plane.distance_to(move_bone_global_pose.basis.x)
 	if dist >= 0:

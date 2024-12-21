@@ -75,21 +75,29 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0604953, 0.00378108)
 current_velocity = 0.0
 
 [node name="LocalFootTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="10"]
-transform = Transform3D(-0.75687, -0.0423545, 0.652193, -0.574975, 0.51759, -0.633645, -0.31073, -0.854581, -0.4161, -0.505479, 0.966743, 0.710837)
+transform = Transform3D(-0.913682, 0.39642, -0.0896534, 0.0864948, -0.025878, -0.995917, -0.397121, -0.917705, -0.0106441, -0.505479, 0.966743, 0.710837)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/LocalFootTarget"]
 transform = Transform3D(-4.37114e-08, 0.148949, 0.988845, 0, 0.988845, -0.148949, -1, -6.51075e-09, -4.32238e-08, 0, 0, 0)
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="GlobalHandTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="11"]
-transform = Transform3D(0.944548, -0.316923, -0.0859762, 0.304923, 0.94366, -0.128566, 0.121878, 0.0952208, 0.987968, -0.301128, 1.39683, -1.84197)
+transform = Transform3D(-0.945581, 0.296248, 0.134602, -0.303442, -0.653455, -0.693485, -0.117487, -0.696588, 0.707788, -0.43371, 1.40194, -1.87991)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/GlobalHandTarget"]
 transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933, 0.000367194, -0.999917, -0.0115527, 0.00576392, 4.97401e-05, -0.00177348, -0.111616)
 mesh = SubResource("PrismMesh_850k2")
 
-[node name="FootIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="12" node_paths=PackedStringArray("target")]
+[node name="HeadTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="12"]
+transform = Transform3D(-0.963136, 0.213341, -0.163888, 0.157078, -0.0486109, -0.98639, -0.218404, -0.975768, 0.0133076, -0.42978, 1.50349, -1.43347)
+top_level = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/HeadTarget"]
+transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933, 0.000367194, -0.999917, -0.0115527, 0.00576392, -0.0334444, -0.00160856, -0.0964702)
+mesh = SubResource("PrismMesh_850k2")
+
+[node name="FootIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="13" node_paths=PackedStringArray("target")]
 _import_path = NodePath("")
 unique_name_in_owner = false
 process_mode = 0
@@ -112,7 +120,30 @@ bone_name = "RightFoot"
 target = NodePath("../LocalFootTarget")
 align_target_rotation = true
 
-[node name="HandIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="13" node_paths=PackedStringArray("target")]
+[node name="HeadIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="14" node_paths=PackedStringArray("target")]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.14104e-08, 0.00058651, -0.0206553)
+rotation_edit_mode = 0
+rotation_order = 2
+top_level = false
+visible = true
+visibility_parent = NodePath("")
+active = true
+influence = 1.0
+script = ExtResource("3_4ks1r")
+bone_name = "Head"
+target = NodePath("../HeadTarget")
+align_target_rotation = true
+
+[node name="HandIK" type="SkeletonModifier3D" parent="simple_character/Visuals/GeneralSkeleton" index="15" node_paths=PackedStringArray("target")]
 _import_path = NodePath("")
 unique_name_in_owner = false
 process_mode = 0
