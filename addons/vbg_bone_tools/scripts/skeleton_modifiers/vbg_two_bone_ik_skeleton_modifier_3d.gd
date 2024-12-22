@@ -147,4 +147,4 @@ func _process_step() -> void:
 
 	# See if we should align the move bone to the axes of the target object.
 	if align_target_rotation:
-		VbgPoseMath.align_bone_to_target_global_basis(skeleton, move_bone, target.global_transform.basis)
+		VbgPoseMath.align_bone_to_target_global_basis_and_offset_by_rest_pose(skeleton, move_bone, target.global_transform.basis)

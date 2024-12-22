@@ -91,7 +91,7 @@ transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="HeadTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="12"]
-transform = Transform3D(-0.971776, 0.229914, 0.0528838, -0.0656898, -0.0484143, -0.996668, -0.226587, -0.972008, 0.0621526, -0.615806, 1.56219, -1.38181)
+transform = Transform3D(-0.800596, 0.578394, -0.156559, -0.11445, -0.404072, -0.907542, -0.588178, -0.708653, 0.389698, -0.65151, 1.5656, -1.4498)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/HeadTarget"]
@@ -168,7 +168,7 @@ target = NodePath("../GlobalHandTarget")
 align_target_rotation = true
 
 [node name="HeadAxesVisualizerNode" type="Node3D" parent="simple_character" node_paths=PackedStringArray("node_to_track")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78134, -5.54129, 7.27135)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.55192, -5.54129, 7.27135)
 script = ExtResource("4_vyttl")
 node_to_track = NodePath("../Visuals/GeneralSkeleton")
 bone_name = "Head"

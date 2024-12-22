@@ -24,9 +24,9 @@
 class_name VbgPoseMath extends RefCounted
 
 
-## Modify pose of the selected bone so that it's axes in rest pose will be aligned
+## Modify pose of the selected bone so that its axes in rest pose will be aligned
 ## with specified axes of the target axes (where target_basis is in the world's global space).
-static func align_bone_to_target_global_basis(
+static func align_bone_to_target_global_basis_and_offset_by_rest_pose(
 		skeleton: Skeleton3D, 
 		move_bone: int, 
 		target_basis: Basis,
@@ -35,12 +35,12 @@ static func align_bone_to_target_global_basis(
 	) -> void:
 
 	var target_basis_in_skeleton_space := (skeleton.global_transform.basis.inverse() * target_basis).orthonormalized()
-	align_bone_to_target_basis_in_skeleton_space(skeleton, move_bone, target_basis_in_skeleton_space, bone_y_axis_to_target_axis, bone_x_axis_to_target_axis)
+	align_bone_to_target_basis_in_skeleton_space_and_offset_by_rest_pose(skeleton, move_bone, target_basis_in_skeleton_space, bone_y_axis_to_target_axis, bone_x_axis_to_target_axis)
 
 
 ## Modify pose of the selected bone so that it's axes in rest pose will be aligned
-## with specified axes of the target axes (where target_basis is in the world's global space).
-static func align_bone_to_target_basis_in_skeleton_space(
+## with specified axes of the target axes (where target_basis is in skeleton's space).
+static func align_bone_to_target_basis_in_skeleton_space_and_offset_by_rest_pose(
 		skeleton: Skeleton3D, 
 		move_bone: int, 
 		target_basis_in_skeleton_space: Basis,
@@ -87,3 +87,41 @@ static func align_bone_to_target_basis_in_skeleton_space(
 		adjustment2 = Quaternion(initial_target_axis, -final_angle)
 	move_bone_global_pose.basis =  Basis(adjustment2) * Basis(adjustment) * move_bone_global_rest_basis
 	skeleton.set_bone_global_pose(move_bone, move_bone_global_pose)
+
+
+
+
+
+## Modify pose of the selected bone so that its y-axis will be aligned
+## with the target axis in global space.
+static func align_bone_to_single_axis_in_global_space(
+		skeleton: Skeleton3D, 
+		move_bone: int, 
+		target_axis_in_global_space: Vector3
+	) -> void:
+
+	if !skeleton:
+		return
+
+	var target_axis_in_skeleton_space := skeleton.global_transform.basis.inverse() * target_axis_in_global_space
+
+	align_bone_to_single_axis_in_skeleton_space(skeleton, move_bone, target_axis_in_skeleton_space)
+
+
+## Modify pose of the selected bone so that its y-axis will be aligned
+## with the target axis in skeleton space.
+static func align_bone_to_single_axis_in_skeleton_space(
+		skeleton: Skeleton3D, 
+		move_bone: int, 
+		target_axis_in_skeleton_space: Vector3
+	) -> void:
+
+	if !skeleton:
+		return
+
+	var bone_pose := skeleton.get_bone_global_pose(move_bone).orthonormalized()
+
+	var adjustment := Quaternion(bone_pose.basis.y, target_axis_in_skeleton_space)
+	bone_pose.basis = bone_pose.basis * Basis(adjustment)
+
+	skeleton.set_bone_global_pose(move_bone, bone_pose)
