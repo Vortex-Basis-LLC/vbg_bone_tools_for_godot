@@ -91,7 +91,7 @@ transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="HeadTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="12"]
-transform = Transform3D(-0.775919, 0.445839, 0.4463, 0.0576661, 0.754637, -0.653608, -0.628195, -0.481408, -0.611244, -0.645462, 1.49418, -1.29942)
+transform = Transform3D(-0.971776, 0.229914, 0.0528838, -0.0656898, -0.0484143, -0.996668, -0.226587, -0.972008, 0.0621526, -0.615806, 1.56219, -1.38181)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/HeadTarget"]
