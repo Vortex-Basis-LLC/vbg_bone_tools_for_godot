@@ -63,7 +63,7 @@ surface_material_override/0 = ExtResource("1_e2oyv")
 shape = SubResource("ConcavePolygonShape3D_2j42j")
 
 [node name="simple_character" parent="." instance=ExtResource("2_jaqcg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.653545, -0.00419629, -1.47739)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.653545, -0.00419629, -1.47116)
 
 [node name="Visuals" parent="simple_character" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.270754, 0)
@@ -91,7 +91,7 @@ transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="HeadTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="12"]
-transform = Transform3D(-0.767367, -0.51503, -0.38196, 0.0156445, 0.580475, -0.814131, 0.641021, -0.63071, -0.43738, -0.682237, 1.6369, -1.55199)
+transform = Transform3D(-0.775919, 0.445839, 0.4463, 0.0576661, 0.754637, -0.653608, -0.628195, -0.481408, -0.611244, -0.645462, 1.49418, -1.29942)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/HeadTarget"]
@@ -172,6 +172,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78134, -5.54129, 7.27135)
 script = ExtResource("4_vyttl")
 node_to_track = NodePath("../Visuals/GeneralSkeleton")
 bone_name = "Head"
+marker_offset = 0.19
+
+[node name="HeadTargetAxesVisualizerNode" type="Node3D" parent="simple_character" node_paths=PackedStringArray("node_to_track")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78134, -5.54129, 7.27135)
+script = ExtResource("4_vyttl")
+node_to_track = NodePath("../Visuals/GeneralSkeleton/HeadTarget")
+marker_shape = 1
 marker_offset = 0.19
 
 [editable path="simple_character"]

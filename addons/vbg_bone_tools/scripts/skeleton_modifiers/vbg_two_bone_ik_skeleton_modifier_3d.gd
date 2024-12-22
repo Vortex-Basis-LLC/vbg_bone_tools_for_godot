@@ -175,6 +175,9 @@ func _align_bone_to_target_object_axes(skeleton: Skeleton3D, move_bone: int, tar
 
 	# That will align one of the three axes together, but we still need to do one more to properly align the axes.
 
+	# IMPORTANT!!!: I tried just using Quaternion(vector1, vector2) to do the final adjustment below, but it creates
+	#   instability and jumping around at certain points. The following method provides consistent, desired behavior.
+
 	# Align x to x.
 	var final_axis := target_rel_to_skeleton_basis.z
 	var final_angle := acos(move_bone_global_pose.basis.x.dot(target_rel_to_skeleton_basis.x))
@@ -189,3 +192,4 @@ func _align_bone_to_target_object_axes(skeleton: Skeleton3D, move_bone: int, tar
 		adjustment2 = Quaternion(final_axis, -final_angle)
 	move_bone_global_pose.basis =  Basis(adjustment2) * Basis(adjustment) * move_bone_global_rest_basis
 	skeleton.set_bone_global_pose(move_bone, move_bone_global_pose)
+
