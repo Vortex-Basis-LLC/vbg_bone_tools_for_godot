@@ -2,8 +2,8 @@
 
 [ext_resource type="Material" uid="uid://1swqqn8wobs1" path="res://assets/materials/voronoi_pattern.tres" id="1_e2oyv"]
 [ext_resource type="PackedScene" uid="uid://djlr3mlfno2ro" path="res://characters/simple_movable_character.tscn" id="2_jaqcg"]
-[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_two_bone_ik_skeleton_modifier_3d.gd" id="3_4ks1r"]
-[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/tools/vbg_axes_visualizer_node.gd" id="4_vyttl"]
+[ext_resource type="Script" uid="uid://03usyg0gh65n" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_two_bone_ik_skeleton_modifier_3d.gd" id="3_4ks1r"]
+[ext_resource type="Script" uid="uid://de78e02h01fa6" path="res://addons/vbg_bone_tools/scripts/tools/vbg_axes_visualizer_node.gd" id="4_vyttl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ua34d"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -91,7 +91,7 @@ transform = Transform3D(0.00576775, -0.000300683, 0.999983, -0.0115508, 0.999933
 mesh = SubResource("PrismMesh_850k2")
 
 [node name="HeadTarget" type="Node3D" parent="simple_character/Visuals/GeneralSkeleton" index="12"]
-transform = Transform3D(-0.800596, 0.578394, -0.156559, -0.11445, -0.404072, -0.907542, -0.588178, -0.708653, 0.389698, -0.65151, 1.5656, -1.4498)
+transform = Transform3D(-0.993517, -0.0350012, -0.108192, 0.112809, -0.183454, -0.976539, 0.0143308, -0.982408, 0.186213, -0.599067, 1.54817, -1.43322)
 top_level = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="simple_character/Visuals/GeneralSkeleton/HeadTarget"]

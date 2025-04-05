@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://1swqqn8wobs1"]
 
-[ext_resource type="Shader" path="res://assets/shaders/voronoi_pattern.gdshader" id="1_m2l7u"]
+[ext_resource type="Shader" uid="uid://c33is4x8kf163" path="res://assets/shaders/voronoi_pattern.gdshader" id="1_m2l7u"]
 
 [resource]
 render_priority = 0

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d3r2hahyyx88j"]
 
-[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/anim_libs/bone_map_assigner/vbg_bone_map_assigner_window.gd" id="1_7vxrq"]
+[ext_resource type="Script" uid="uid://rxjuaardpqaq" path="res://addons/vbg_bone_tools/scripts/anim_libs/bone_map_assigner/vbg_bone_map_assigner_window.gd" id="1_7vxrq"]
 
 [node name="Window" type="Window"]
 initial_position = 4

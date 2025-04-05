@@ -1,10 +1,10 @@
 [gd_scene load_steps=28 format=4 uid="uid://djlr3mlfno2ro"]
 
-[ext_resource type="Script" path="res://characters/simple_movable_character.gd" id="1_8xsnm"]
-[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_play_anim_skeleton_modifier_3d.gd" id="3_gby41"]
+[ext_resource type="Script" uid="uid://tjvl6uyfky0g" path="res://characters/simple_movable_character.gd" id="1_8xsnm"]
+[ext_resource type="Script" uid="uid://dblhkoc86bu50" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_play_anim_skeleton_modifier_3d.gd" id="3_gby41"]
 [ext_resource type="Animation" uid="uid://dnerthe5dkdyd" path="res://assets/anims/simple_character/simple_character_idle.res" id="4_1y471"]
-[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/vbg_anim_ref.gd" id="5_nt5oy"]
-[ext_resource type="Script" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_walk_run_skeleton_modifier_3d.gd" id="6_tajap"]
+[ext_resource type="Script" uid="uid://bo2iflyjntb1w" path="res://addons/vbg_bone_tools/scripts/vbg_anim_ref.gd" id="5_nt5oy"]
+[ext_resource type="Script" uid="uid://cfvt8enwr8gev" path="res://addons/vbg_bone_tools/scripts/skeleton_modifiers/vbg_walk_run_skeleton_modifier_3d.gd" id="6_tajap"]
 [ext_resource type="Animation" uid="uid://b4rajfuvhd8ho" path="res://assets/anims/simple_character/simple_character_walk.res" id="7_asrnt"]
 [ext_resource type="Animation" uid="uid://1qx3tdevt4kt" path="res://assets/anims/simple_character/simple_character_run.res" id="8_syxm2"]
 
